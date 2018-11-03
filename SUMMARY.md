@@ -19,6 +19,13 @@
   * [Lesson 3: Method Calls](java_lessons/3_method_calls.md)
   * [Lesson 4: The If Statement](java_lessons/4_if_statement.md)
 
+* [Git Introduction]()
+    * [Introducing Git and GitHub](git/git_about.md)
+    * [Git Fundamentals](git/git_fundamentals.md)
+    * [Next Level Git](git/git_advanced.md)
+    * [Configuring Git and Helpful Tools/Commmands](git/git_configure.md)
+    * [FAQ](git/git_faq.md)
+
 * [Development Guidelines](dev_guide/README.md)
     * [Flashing Components](dev_guide/flashing.md)
     * [Spartronics Git Workflow](dev_guide/git_flow.md)
