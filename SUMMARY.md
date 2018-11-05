@@ -23,8 +23,7 @@
     * [Introducing Git and GitHub](git/git_about.md)
     * [Git Fundamentals](git/git_fundamentals.md)
     * [Next Level Git](git/git_advanced.md)
-    * [Configuring Git and Helpful Tools/Commmands](git/git_configure.md)
-    * [FAQ](git/git_faq.md)
+    * [FAQ: git, vi, bash shell](git/git_faq.md)
 
 * [Development Guidelines](dev_guide/README.md)
     * [Flashing Components](dev_guide/flashing.md)

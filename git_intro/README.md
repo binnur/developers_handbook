@@ -4,8 +4,7 @@ Introduction to git.
 * [Introducing Git and GitHub](./git_about.md)
 * [Git Fundamentals](./git_fundamentals.md)
 * [Next Level Git](./git_advanced.md)
-* [Configuring Git and Helpful Tools/Commmands](./git_configure.md)
-* [FAQ](./git_faq.md)
+* [FAQ: git, vi, bash shell](./git_faq.md)
 
 ## Various Resources
 - [git - the simple guilde](http://rogerdudler.github.io/git-guide/)
