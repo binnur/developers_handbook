@@ -21,6 +21,7 @@ There are various git sources here is the link to [GitHub's bootcamp](https://he
     - [Git fork](#git-fork)
     - [GitHub pull request](#github-pull-request)
     - [Git commit messages](#git-commit-messages)
+    - [Merge conflicts](#merge-conflicts)
     - [Git log and git show](#git-log-and-git-show)
 - [Basic git configuration](#basic-git-configuration)
     - [Username & email](#username--email)
@@ -28,9 +29,13 @@ There are various git sources here is the link to [GitHub's bootcamp](https://he
     - [.gitignore](#gitignore)
     - [Set default editor](#set-default-editor)
 - [Git Commands](#git-commands)
+    - [git help](#git-help)
     - [git init](#git-init)
     - [git status](#git-status)
+    - [git pull vs git fetch && git merge](#git-pull-vs-git-fetch--git-merge)
+        - [What is git checkout? And a branch?](#what-is-git-checkout-and-a-branch)
     - [git add and git commit](#git-add-and-git-commit)
+- [push changes to your online repo](#push-changes-to-your-online-repo)
 
 <!-- /TOC -->
 
@@ -119,6 +124,11 @@ Commit structure is as follows. Read more about writing good commits [here](http
 * 2nd line is a blank line
 * 3rd+ lines are more detailed information about the change
 
+## Merge conflicts
+In a collaborative environment, merge conflicts are inevitable. Merge conflict occurs when your changes conflict with the base branch/repo. With that, git requires you to decide which changes are valid for the final merge.
+
+Frequently staying in sync w/ your upstream/main repo helps avoid potential merge conflicts. This requires frequent _git pull_ from the upstream to ensure your work is in sync with main repo.
+
 ## Git log and git show
 _git log_ is a great way to explore contribution to a repo. Some handy git log options.
 
@@ -192,6 +202,16 @@ $ git config --global core.editor "nano -w"
 ```
 
 # Git Commands
+## git help
+You can access git help at anytime -- and don't forget to pay attention to git prompts after git commands are applied!
+
+```sh
+# git help
+$ git help
+# git help on status command
+$ git help status
+```
+
 ## git init
 See [git init](./#Git-init) section for more information.
 
@@ -237,6 +257,69 @@ Looking at the git status, I can tell:
 * My branch is ahead by 1 commit, meaning other developers following my fork on binnur/gitintro would not get my local updated
 * I have several untracked files and I need to use _git add_ to track, i.e. add them to the repo
 
+## git pull vs git fetch && git merge
+_git pull_ vs _git fetch && _git merge_ has a similar outcome with different
+intents.
+
+_git pull_ pulls the changes from the remote and magically applies them to your
+local repo. It is a _fetch && merge_ in one. The _git pull_ fetches and
+downloads content from a remote repository and immediately updates the local
+repository to match that content.
+
+```sh
+# by default fetches from the remote your local repo is tracking and applies to your current branch
+$ git pull
+```
+
+However, as it is magical, recommendation is to use _fetch_ and _merge_ to
+ensure you understand how your working directory will be updated, this is
+important when you get to next level of git with branches.
+
+_git fetch_ downloads all related commits, files, etc. from remote repo to your local repo. It allows you to see what everyone has been working on. As it does not apply the changes to your local repo, _git fetch_ allows you to review changes and deciding how to _git merge_ the updates.
+
+```sh
+# fetch all content
+$ git fetch --al
+# fetch specific remote & branch
+$ git fetch upstream master
+# dry-run fetch command
+$ git fetch --dry-run <remote_name>
+```
+
+_git merge_ will apply the changes to your local repo after _git fetch_.
+
+```sh
+# merge origin/master
+$ git merge origin/master
+# merge all of origin's content
+$ git merge origin
+```
+
+Merge process can result in conflicts -- this is basically git's way of saying
+it cannot automatically decide how to handle conflicts and it needs help to
+determine which version/entry is the correct one. Read more on [handling merge
+conflicts](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/).
+
+### What is git checkout? And a branch?
+When you perform _git pull_, git automatically checkout the default branch that
+is set by the remote repo. _git checkout_ allows the developer to switch between different versions of a branch or commits. This process updates the contents of your working directory to the state of that branch or commit.
+
+In general, you may checkout between branches, such as creating a feature branch to ensure your master branch is production ready at all times.
+
+```sh
+# create and checkout a new branch at the same time
+$ git checkout -b my-new-branch
+# above command w/ '-b' is same as:
+$ git branch my-new-branch
+$ git checkout my-new-branch
+# checkout master branch
+$ git checkout master
+# checkout a specific branch
+$ git checkout <branch-name>
+# print a list of branches
+$ git branch -a
+```
+
 ## git add and git commit
 _git add_ and _git commit_ are used in combination to 'save' git repo's current state. _git add_ makes a change to the staging area by adding files from working directory to repo's staging area. Changes are not recorded until you _git commit_.
 
@@ -252,6 +335,7 @@ $ git add <dir name>
 ```
 
 _git commit_ will publish the git_intro/git_fundamentals.md file to the local repo
+
 ```sh
 $ git commit
 [gitintro c0bbf03] Initial content to 'git' going
@@ -259,12 +343,26 @@ $ git commit
  create mode 100644 git_intro/git_fundamentals.md
  ```
 
-### git reset
-
 ## git push
+Using _git push_ commits changes made to your local repo to remote repository. _git push_ takes two arguments:
+* remote name, ex. _origin_
+* branch name, ex. _master_
 
-## git pull
-
-## git fetch
-
-## git merge
+```sh
+# push changes to your online repo
+$ git push origin master
+Enumerating objects: 12, done.
+Counting objects: 100% (12/12), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (9/9), 447.26 KiB | 20.33 MiB/s, done.
+Total 9 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To github.com:binnur/developers_handbook.git
+   30d5926..71bda4d  gitintro -> gitintro
+```
+### What is "non-fast-forward"?
+When your local repo is behind the repo you are pushing to you will see an error
+`non-fast-forward updates were rejected`. That means you need to retrieve the
+changes before you can push your changes. Read more about [git pull vs git fetch
+&& git merge](#git-pull-vs-git-fetch-&&-git-merge).
