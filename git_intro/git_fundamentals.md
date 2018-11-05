@@ -1,20 +1,31 @@
 # Git Fundamentals
-This section covers the basics of setting up git environment and most used commands.
+This section covers the basics of setting up the git environment and the most
+commonly used commands.
 
-* Install the latest version of git: https://www.git-scm.org
-* If you don't have an account, sign up for a free GitHub account: https://www.github.com
-* Use your package manager, or install GitHub's program here: https://desktop.github.com/
+* Install the latest version of git for your computer: https://www.git-scm.com/downloads
+  * Simply click on the link for your operating system to download the installer
+  * Follow the instructions to install the package
+  * Optionally install GitHub's desktop GUI client: https://desktop.github.com/
+* If you don't already have one, sign up for a free GitHub account: https://www.github.com
 
-In the terminal, run the commands, without the dollar sign at the front -- quotes are important.
+Commands are executed in the terminal window. Examples in this document show the command
+to be executed after a dollar sign ($) prompt. *Do not type the dollar sign when entering
+commands.* Note that some commands include quotes around words or phrases. These quotes
+are important -- *don't skip them*. Lines that begin with the hash symbol (#) are comments
+for informational purposes only.
 
-Important, git provides helpful information -- pay attention to the git outputs.
+**Important:** git provides helpful information -- pay attention to the git output messages.
 
-There are various git sources here is the link to [GitHub's bootcamp](https://help.github.com/categories/bootcamp/).
+There are many git references and tutorials on-line. Here is the link to
+[GitHub's bootcamp](https://help.github.com/categories/bootcamp/).
 
 <!-- TOC -->
 
 - [Git Fundamentals](#git-fundamentals)
 - [Understanding git](#understanding-git)
+- [Important set-up for the new git user](#important-set-up-for-the-new-git-user)
+    - [Username & email](#username--email)
+    - [Default editor](#default-editor)
 - [Creating and contributing to a repo](#creating-and-contributing-to-a-repo)
     - [Git init](#git-init)
     - [Git clone](#git-clone)
@@ -23,11 +34,9 @@ There are various git sources here is the link to [GitHub's bootcamp](https://he
     - [Git commit messages](#git-commit-messages)
     - [Merge conflicts](#merge-conflicts)
     - [Git log and git show](#git-log-and-git-show)
-- [Basic git configuration](#basic-git-configuration)
-    - [Username & email](#username--email)
+- [Basic repo configuration](#basic-repo-configuration)
     - [Git remotes](#git-remotes)
     - [.gitignore](#gitignore)
-    - [Set default editor](#set-default-editor)
 - [Git Commands](#git-commands)
     - [git help](#git-help)
     - [git init](#git-init)
@@ -40,15 +49,77 @@ There are various git sources here is the link to [GitHub's bootcamp](https://he
 <!-- /TOC -->
 
 # Understanding git
-Git requires files to be added before they can be committed. This allow changes
-to be committed in batches. Git uses _staging area_ to track changes which are
-not yet committed. Git saves information about files' history in the .git directory.
+Git is a _version control system_. It keeps track of changes that the
+developer makes to the files in the repo, and allows these changes to
+be shared with others, removed at a later time, or re-ordered and
+combined to package several small changes into one.
+
+A developer causes a change by editing files in the repo, or adding or
+files from the repo. After editing the files, git must be told what the
+change is so that it can track it. To do so, the developer groups the
+changes together into a _commit_. The commit is the basic trackable
+unit of git, and it is identified by a _hash_, a string of hexadecimal
+numbers that uniquely identifies that particular change to the repo.
+
+In order to create the commit, the developer will _add_ the files and
+other changes to a _staging area_, where git keeps track of items that
+will be included in the next commit. In this way, changes can be grouped
+together into a batch that is included in a single commit.
+
+All of the behind-the-scenes work performed by git goes on in a special
+directory in the top directory of the repository: _.git_. This is the
+place where changes are staged, and the rest of the repository history
+is kept. Basically, the state of every file for the life of the repo is
+instantly available to the developer through git commands that act on
+the .git directory. (Note that the dot in front of the directory name
+causes it to be hidden in a normal _ls_ directory listing. Use _ls -a_
+to reveal these hidden files.)
 
 ![Git staging](images/git_staging.png)
 
+# Important set-up for the new git user
+## Username & email
+When a developer commits a change to a repository, the commit is labeled
+with their user name and email address. It is important to set up your
+development machine with valid identity information so that your teammates
+know who is working on what. While you can set up any name/address you
+like, for the purposes of our team please use your real name and email
+address.
+
+You only need to set this up once when you install git on your computer.
+After that, all repositories that you work in will be aware of your
+identity. The information that you are entering here will be stored
+in the _.gitconfig_ file in your user home directory.
+
+```bash
+# set username & email in global git configuration
+$ git config --global user.name "Your Real Name"
+$ git config --global user.email "your.real.email@somewhere.com"
+```
+
+## Default editor
+Git brings up a text editor whenever the user is required to enter
+information about a commit. The default editor that it chooses may
+not be what the developer likes. It is possible to change the default
+editor in a similar way to setting the user identity.
+
+```bash
+# set nano as the default editor in global git configuration
+$ git config --global core.editor "nano -w"
+```
+
 # Creating and contributing to a repo
 ## Git init
-If you are creating a new repo, setup your working directory first, and move to that directory before initializing the repo.
+You can create a repo easily on your computer. Doing so will create
+a private repo, as it is not automatically associated with a server
+(ie, GitHub) that will allow it to be shared. You can create these
+repos wherever you like, but be aware that creating a repo inside
+another repo can be confusing to work in. Creating and using repos
+from scratch is a great way to try out git without fear of messing
+up a shared group repo.
+
+If you are creating a brand new repo, create your working directory
+first, and switch to that directory before initializing the repo.
 
 ```sh
 # create your working directory to host your project
@@ -61,12 +132,18 @@ $ git init
 Initialized empty Git repository in /Users/binnur/my_coolest_project/.git/
 ```
 
-Initialing git repo, creates a .git directory to manage tracked files. Deleting this directory will delete all project history.
+Initializing a git repo automatically creates a .git directory to manage
+tracked files.  Deleting this directory will delete all project history.
+__Don't do that unless you really want to destroy your copy of the repository__
 ```sh
-# show all files
+# list all files
 $ ls -a
 ```
-At this point, our project tracking is setup and ready to go. Remember previous comment about how helpful git is? Let's take a look at its status after _git init_. It tells us to use _git add_ to track files we want to add to version control.
+
+At this point, our project tracking is setup and ready to go, but there are
+no files in the repo. Remember previous comment about how helpful git is?
+Let's take a look at its status after _git init_.
+It tells us to use _git add_ to track files we want to add to version control.
 ```sh
 # show the status of git
 $ git status
@@ -78,16 +155,25 @@ nothing to commit (create/copy files and use "git add" to track)
 ```
 
 ## Git clone
-_git clone_ is the process of creating a copy of a target repository. With
-GitHub you can simply copy the URL for the repo and execute a _git clone_
+_git clone_ is the process of creating a copy of a shared remote repository.
+The command takes a parameter that is the location of the remote repo,
+and this location can be another git directory on the same machine, or
+a URL that points to a remote network location.
+
+With GitHub you can simply copy the URL for the repo and execute a _git clone_
 command on your system to create a copy.
 
-GitHub provides HTTPS or SSH URLs for cloning. You can read more about it [here](https://help.github.com/articles/which-remote-url-should-i-use/)
+GitHub provides HTTPS or SSH URLs for cloning. HTTPS is the easiest way to
+clone a public repository that you don't intend to push changes to. SSH uses
+the _secure shell_ protocol to create an authenticated two-way link between
+your computer and GitHub, and requires that you set up shared keys on your
+machine and GitHub.
+You can read more about this [here](https://help.github.com/articles/which-remote-url-should-i-use/)
 
 ![GitHub clone](images/clone.png)
 
 ```sh
-# Clone to your destination, where you want to create the copy of the repo
+# Clone the Atlas repository into your current directory
 $ git clone https://github.com/Spartronics4915/Atlas.git
 Cloning into 'Atlas'...
 remote: Enumerating objects: 1144, done.
@@ -97,16 +183,29 @@ Resolving deltas: 100% (461/461), done.
 ```
 
 ## Git fork
-_git fork_ is a copy of the repository that you manage in your own GitHub account. Here are example of forks in my GitHub account.
+GitHub supports the use of the _forking workflow_. In this workflow, the
+developer duplicates the main project repo into their own GitHub account
+workspace, and then clones that duplicated repo onto their computer in
+order to make changes to the project. In this way, the developer can
+make all the changes that they want to the clone on their machine, and
+can also push those changes to their copy of the repo on GitHub, without
+affecting the main project at all.
+
+
+Here are example of forks in my GitHub account.
 ![Binnur's forks](images/forks.png)
 
-You can execute _fork_ from any of the repositories you wish to copy.
+You can _fork_ any of the repositories you wish to copy, simply by clicking
+on the "fork" button.
 ![Forking in GitHub](images/forking.png)
 
-From there, you can _git clone_ to your system. Any changes you make to your
-forked repo will not impact the source repo. If you want to collaborate with the
-source repo, you use _pull request_ where the maintainers will review and merge
-or reject/request updates to your contributions.
+Once you have a fork in your account, you can _git clone_ it to your system.
+Any changes you make to your forked repo will not impact the main project repo.
+When you are satisfied that you have
+a change that should be included in the main project, create a
+_pull request_ to allow the team to review the changes and then _merge_
+them from your repo into the main team repo. If issues are found,
+the reviewer can make suggestions for changes to be made before merging.
 
 ## GitHub pull request
 You can contribute to a forked repository by submitting a _pull request_ to the
@@ -154,15 +253,7 @@ $ git show 97a7c5f0d
 $ git show 97a7c5f0d --stat
 ```
 
-# Basic git configuration
-## Username & email
-Git users username and email to track changes and associate commits to the repo. You can set your username & email for global (across all repos) or for individual repos.
-
-```bash
-# set username & email for global git configuration
-$ git config --global user.name "Your Name"
-$ git config --global user.email "the email you used to sign up for github"
-```
+# Basic repo configuration
 
 ## Git remotes
 For background on _git remotes_, see [What is a repo and remotes?](./git_about.md#"What-is-a-repo-and-remotes").
@@ -182,23 +273,18 @@ Using the remotes, I can pull the updates from _origin_, i.e. Spartronics' repo
 for developers_handbook, to stay in sync with other developers on the repo.
 Using _binnur_ I can push my updates to my GitHub repo and submit a pull request to Spartronics.
 
-Note, your remotes can be named to anything. However, we will use the standard 'upstream' to refer to the source, and 'origin' to refer to our fork.
+Note, your remotes can be named to anything.
+However, we will use the standard 'upstream' to refer to the source,
+and 'origin' to refer to our fork.
 
 ## .gitignore
-_.gitignore_ specifies all files that should be untracked. See [GitHub's ignoring files for more information] (https://help.github.com/articles/ignoring-files/).
+_.gitignore_ specifies all files that should not be tracked by git.
+See [GitHub's ignoring files for more information] (https://help.github.com/articles/ignoring-files/).
 
 ```sh
 # ignore sketch files, anywhere in the git repo
-$  cat .gitignore
+$ cat .gitignore
 *.sketch
-```
-
-## Set default editor
-Many git commands will launch an editor for further input, such as applying commit changes. By default, git will use vi editor. However, you can configure your default editor.
-
-```sh
-# set nano as default editor
-$ git config --global core.editor "nano -w"
 ```
 
 # Git Commands
@@ -210,6 +296,8 @@ You can access git help at anytime -- and don't forget to pay attention to git p
 $ git help
 # git help on status command
 $ git help status
+# git help on clone command
+$ git help clone
 ```
 
 ## git init
