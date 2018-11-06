@@ -28,12 +28,14 @@ There are many git references and tutorials on-line. Here is the link to
     - [Default editor](#default-editor)
 - [Creating and contributing to a repo](#creating-and-contributing-to-a-repo)
     - [Git init](#git-init)
+    - [Adding files](#adding-files)
+    - [Git commit messages](#git-commit-messages)
+    - [Git log and git show](#git-log-and-git-show)
     - [Git clone](#git-clone)
     - [Git fork](#git-fork)
     - [GitHub pull request](#github-pull-request)
-    - [Git commit messages](#git-commit-messages)
+    - [Mergeing](#merging)
     - [Merge conflicts](#merge-conflicts)
-    - [Git log and git show](#git-log-and-git-show)
 - [Basic repo configuration](#basic-repo-configuration)
     - [Git remotes](#git-remotes)
     - [.gitignore](#gitignore)
@@ -154,6 +156,128 @@ No commits yet
 nothing to commit (create/copy files and use "git add" to track)
 ```
 
+## Adding files
+To add some files to the repository, or to track the changes that are made
+to files that are already in the repo, there is a two-step process: _add_
+and then _commit_. The first step (the _add_) copies the file into a special
+staging area inside the _.git_ directory of the repo. It is possible to
+add multiple files, one at a time, in groups with wildcards, or even an
+entire directory of files all at once. After adding files, you can check
+what has been staged by using the _git status_ command.
+
+```sh
+# add the file ReadMe.txt to the staging area
+$ git add ReadMe.txt
+# add everything in the subdirectory Source to the staging area
+$ git add Source
+# check the repo status
+$ git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   ReadMe.txt
+        new file:   Source/main.c
+        new file:   Source/main.h
+```
+
+With files ready to go, it's time to finalize the change to the repo. To
+do this you use the _git commit_ command. This command takes the contents
+of the staging area and bundles all of these new and changed files as a
+group, and then asks you to describe the change with a _commit message_.
+After the change has been described by the developer, it gets added to
+the current branch history. _git status_ will report that the staging
+area is empty, but _git log_ will now include the most recent commit
+message, and the files will be updated with the changes.
+
+```sh
+# commit the staged files to the current branch history
+$ git commit
+# editor opens with the following text
+
+    # Please enter the commit message for your changes. Lines starting
+    # with '#' will be ignored, and an empty message aborts the commit.
+    #
+    # On branch master
+    #
+    # Initial commit
+    #
+    # Changes to be committed:
+    #       new file:   ReadMe.txt
+    #       new file:   Source/main.c
+    #       new file:   Source/main.h
+    #
+# After entering a commit message ("Initial commit to my main repo")
+[master (root-commit) e41977e] Initial commit to my main repo
+ 3 files changed, 23 insertions(+)
+ create mode 100644 ReadMe.txt
+ create mode 100644 Source/main.c
+ create mode 100644 Source/main.h
+# Check the results with git log
+$ git log
+commit e41977eff5a26d8db88a46e212e59095486fb432 (HEAD -> master)
+Author: Riyadth Al-Kazily <riyadth@gmail.com>
+Date:   Mon Nov 5 21:42:26 2018 -0800
+
+    Initial commit to my main repo
+
+    This code prints Hello world. It compiles without errors. It has not yet
+    been tested on the robot.
+```
+
+## Git commit messages
+_git commit_ messages are how changes to a repo are documented and described.
+They are critical for collaboration, and also merely remembering what work
+was done before. It is __very important__ that all developers write high quality
+commit messages that are brief and to the point, and that follow the best
+practices with regard to formatting. This is where you get to tell others
+what your change does, how to use the feature, and even what additional
+work needs to be done to enhance the feature in the future.
+
+What is a bad commit message?
+Check out examples [here](https://www.codelord.net/2015/03/16/bad-commit-messages-hall-of-shame/).
+
+The commit message format is as follows.
+* 1st line is a summary, 50 characters or less
+* 2nd line is a blank line
+* 3rd line and onward, 80 characters or less per line, describes the change in detail
+
+Read more about writing good commits [here](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
+
+## Git log and git show
+_git log_ is a great way to explore the contents of a repo.
+An important thing to note is the git hash, the long string of _hexadecimal_
+digits that identifies each unique commit. This hash is important for
+manipulating individual commits, and also for "going back in time" to
+examine the project at any previous point in its history.
+Some handy git log options.
+
+```sh
+# basic git log
+$ git log
+# one line summary of commits
+$ git log --oneline
+# commit statistics
+$ git log --stat
+# commits by author
+$ git shortlog
+# pretty the output
+$ git log --pretty="%cn committed %h on %cd"
+# commits for an author
+$ git log --author="Tarkan"
+```
+
+_git show_ displays detailed information on a given commit. As the parameter,
+you provide the first several characters of the commit hash you want to see.
+
+```sh
+$ git show 97a7c5f0d
+$ git show 97a7c5f0d --stat
+```
+
 ## Git clone
 _git clone_ is the process of creating a copy of a shared remote repository.
 The command takes a parameter that is the location of the remote repo,
@@ -208,50 +332,78 @@ them from your repo into the main team repo. If issues are found,
 the reviewer can make suggestions for changes to be made before merging.
 
 ## GitHub pull request
-You can contribute to a forked repository by submitting a _pull request_ to the
-upstream repository.
+You can contribute your changes (that you pushed to your fork) to the
+_upstream_ repository by submitting a _pull request_. You do this on
+GitHub, as pull requests are not a part of the basic git tool. They are
+part of a workflow that GitHub provides, to make it easier for groups
+to work together on the same repository.
+
+The basic idea is that you select the branch with changes in your repo
+that you want to submit to the main project repo, and also specify the
+destination branch in the main repo. When you submit the pull request,
+the managers of the main repo are notified and can review your changes
+for any issues, and can make comments if there are things that they need
+you to fix. If they accept the changes, they click a button to _merge_
+your changes into the main repository, after which everyone on the team
+can _fetch_ or _pull_ the changes into their local repostories.
 
 [See GitHub documentation](https://help.github.com/articles/creating-a-pull-request-from-a-fork/).
 
-## Git commit messages
-_git commit_ messages are a great way to share the changes that has been made to the repo and why. Writing good commit messages important for good collaboration.
+## Merging
+When a pull request is accepted, the changes from the developer repo are
+_merged_ into the main repo. It is also possible to merge one branch
+into another within your own repo, or merge a remote branch on GitHub
+into your private working branch.
 
-What is a bad commit message? Check out examples from [here](https://www.codelord.net/2015/03/16/bad-commit-messages-hall-of-shame/).
+The _merge_ operation is how git reconciles two different histories into
+one. In the simplest case, a merge operation performs a _fast forward_,
+adding the new change to the end of the commit history. The new commits
+appear at the very top of the _git log_ output, before any of the old,
+existing commits.
 
-Commit structure is as follows. Read more about writing good commits [here](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
-* 1st line is a summary, 50 chars or less
-* 2nd line is a blank line
-* 3rd+ lines are more detailed information about the change
+Usually things are not so simple, however. It is common for two or more
+developers to all be making changes to their copies of the repository
+at the same time, and the first developer to make a pull request will
+have no issues with their changes, as they will be a _fast forward_
+merge. However, the remaining developers merges will be trying to
+add their changes to a history that doesn't match the local repo (as the
+main repo now contains a new commit). In this case, git tries to take
+care of everything and creates a merge commit to reconcile any differences
+between the two histories.
+
+Often a merge commit goes fine. Sometimes there are odd artifacts as
+a result of two developers working on the same area of functionality.
+But sometimes git cannot resolve the two histories into one, and
+throws up a scary looking message about a _merge conflict_. This can
+happen if two developers both made changes to the same file, especially
+if their changes were very close together (or even on the same line of
+code).
 
 ## Merge conflicts
-In a collaborative environment, merge conflicts are inevitable. Merge conflict occurs when your changes conflict with the base branch/repo. With that, git requires you to decide which changes are valid for the final merge.
+In a collaborative environment, merge conflicts are inevitable.
+A merge conflict occurs when changes in your history are nearby changes
+made by another developer, and that other developer merged their changes
+into the main repo first. Basically it is a conflict that the git tool
+is not smart enough to fix on its own, as it doesn't know who's changes
+are more important, or how one set of changes might affect the other.
 
-Frequently staying in sync w/ your upstream/main repo helps avoid potential merge conflicts. This requires frequent _git pull_ from the upstream to ensure your work is in sync with main repo.
+For example, if one developer changed the variable names in a function
+to make a formula easier to read, and another developer broke up the
+confusing formula and put comments in between lines, these changes could
+not be merged together and git would report a conflict.
 
-## Git log and git show
-_git log_ is a great way to explore contribution to a repo. Some handy git log options.
+When a merge conflict happens, git requires the second developer to
+decide which changes are valid in the final merge. In the case of this
+example, the developer can choose to keep the new variable names or the
+comments, or both.
 
-```sh
-# basic git log
-$ git log
-# one line summary of commits
-$ git log --oneline
-# commit statistics
-$ git log --stat
-# commits by author
-$ git shortlog
-# pretty the output
-$ git log --pretty="%cn committed %h on %cd"
-# commits for an author
-$ git log --author="Tarkan"
-```
+Frequently syncing your local repository with your upstream/main repo helps
+avoid potential merge conflicts.
+This requires frequent _git pull_ from the upstream to ensure you have a
+complete set of changes from other developers before creating your changes.
+The more out of sync your local repo is from the upstream, the more merge
+conflicts you can expect to have.
 
-_git show_ displays specific information on a given commit. As input, you provide the sha slice.
-
-```sh
-$ git show 97a7c5f0d
-$ git show 97a7c5f0d --stat
-```
 
 # Basic repo configuration
 
@@ -269,16 +421,22 @@ origin	git@github.com:Spartronics4915/developers_handbook.git (fetch)
 origin	git@github.com:Spartronics4915/developers_handbook.git (push)
 ```
 
-Using the remotes, I can pull the updates from _origin_, i.e. Spartronics' repo
-for developers_handbook, to stay in sync with other developers on the repo.
-Using _binnur_ I can push my updates to my GitHub repo and submit a pull request to Spartronics.
+Using these remotes, I can pull updated history from _origin_, i.e. Spartronics'
+repo for developers_handbook, to stay in sync with other developers on the repo.
+Using the _binnur_ remote I can push my updates to my GitHub repo in order to
+submit a pull request to Spartronics.
 
 Note, your remotes can be named to anything.
 However, we will use the standard 'upstream' to refer to the source,
 and 'origin' to refer to our fork.
+It is not wise to name a remote the same as a branch (ie, don't name a
+remote _master_), or vice-versa. It can make git operations very confusing.
 
 ## .gitignore
-_.gitignore_ specifies all files that should not be tracked by git.
+The _.gitignore_ file lists all files (by name, or via wildcard characters)
+that should not be tracked by git. This is useful to keep build artifacts or
+developer-specific configuration files out of git, so that they don't affect
+the development environment of other contributors.
 See [GitHub's ignoring files for more information] (https://help.github.com/articles/ignoring-files/).
 
 ```sh
@@ -289,7 +447,9 @@ $ cat .gitignore
 
 # Git Commands
 ## git help
-You can access git help at anytime -- and don't forget to pay attention to git prompts after git commands are applied!
+You can access git help anytime -- and don't forget to pay attention
+to git messages after git commands are executed! (They are trying to tell
+you something...)
 
 ```sh
 # git help
@@ -341,12 +501,12 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 Looking at the git status, I can tell:
-* I am on 'gitintro' branch
-* My branch is ahead by 1 commit, meaning other developers following my fork on binnur/gitintro would not get my local updated
-* I have several untracked files and I need to use _git add_ to track, i.e. add them to the repo
+* I am on the 'gitintro' branch
+* My branch is ahead of its remote by 1 commit, meaning other developers following my fork on binnur/gitintro can not see my most recent change
+* I have several untracked files and I need to use _git add_ to add them to the repo
 
 ## git pull vs git fetch && git merge
-_git pull_ vs _git fetch && _git merge_ has a similar outcome with different
+_git pull_ vs _git fetch && git merge_ has a similar outcome with different
 intents.
 
 _git pull_ pulls the changes from the remote and magically applies them to your
@@ -359,15 +519,19 @@ repository to match that content.
 $ git pull
 ```
 
-However, as it is magical, recommendation is to use _fetch_ and _merge_ to
+However, as it is magical, the recommendation is to use _fetch_ and _merge_ to
 ensure you understand how your working directory will be updated, this is
 important when you get to next level of git with branches.
 
-_git fetch_ downloads all related commits, files, etc. from remote repo to your local repo. It allows you to see what everyone has been working on. As it does not apply the changes to your local repo, _git fetch_ allows you to review changes and deciding how to _git merge_ the updates.
+_git fetch_ downloads all related commits, files, etc. from the remote repo
+to your local repo. It allows you to see what everyone has been working on.
+As it does not apply the changes to the currently checked out branch of your
+local repo, _git fetch_ allows you to review changes and decide how to
+_git merge_ the updates.
 
 ```sh
-# fetch all content
-$ git fetch --al
+# fetch changes from all remotes
+$ git fetch --all
 # fetch specific remote & branch
 $ git fetch upstream master
 # dry-run fetch command
@@ -377,27 +541,34 @@ $ git fetch --dry-run <remote_name>
 _git merge_ will apply the changes to your local repo after _git fetch_.
 
 ```sh
-# merge origin/master
+# merge origin/master into your current branch
 $ git merge origin/master
-# merge all of origin's content
+# merge all of origin's content into your current branch
 $ git merge origin
 ```
 
-Merge process can result in conflicts -- this is basically git's way of saying
+The merge process can result in conflicts -- this is basically git's way of saying
 it cannot automatically decide how to handle conflicts and it needs help to
 determine which version/entry is the correct one. Read more on [handling merge
 conflicts](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/).
 
 ### What is git checkout? And a branch?
-When you perform _git pull_, git automatically checkout the default branch that
-is set by the remote repo. _git checkout_ allows the developer to switch between different versions of a branch or commits. This process updates the contents of your working directory to the state of that branch or commit.
+When you perform _git clone_, git will automatically _checkout_ the default
+branch that is set by the remote repo. _git checkout_ allows the developer
+to switch between different versions of a branch or commits. This process
+updates the contents of your working directory to match the state of that
+branch or commit.
 
-In general, you may checkout between branches, such as creating a feature branch to ensure your master branch is production ready at all times.
+In general, you can checkout any number of branches, such as creating a
+feature branch to ensure your master branch is production ready at all times.
+You will always be able to _pull_ or _merge_ upstream changes into your master
+branch without conflicts because you make your modifications only to the
+feature branch(es), and push those branches to GitHub to submit merge requests.
 
 ```sh
-# create and checkout a new branch at the same time
+# create and checkout a new branch in one go
 $ git checkout -b my-new-branch
-# above command w/ '-b' is same as:
+# above command with '-b' is same as:
 $ git branch my-new-branch
 $ git checkout my-new-branch
 # checkout master branch
@@ -409,12 +580,16 @@ $ git branch -a
 ```
 
 ## git add and git commit
-_git add_ and _git commit_ are used in combination to 'save' git repo's current state. _git add_ makes a change to the staging area by adding files from working directory to repo's staging area. Changes are not recorded until you _git commit_.
+_git add_ and _git commit_ are used in combination to 'save' the git repo's
+current state. _git add_ makes a change to the staging area by adding
+files from working directory to the repo's staging area. Changes are not
+recorded until you _git commit_.
 
-As discussed in the [git status](./#git-status) section, _git status_ highlights the status of the repo.
+As discussed in the [git status](./#git-status) section,
+_git status_ highlights the status of the repo.
 
 ```sh
-# start tracking the git_fundamentals.md file:w
+# start tracking the git_fundamentals.md file
 $ git add git_intro/git_fundamentals.md
 # add every file in the current directory
 $ git add .
@@ -422,7 +597,8 @@ $ git add .
 $ git add <dir name>
 ```
 
-_git commit_ will publish the git_intro/git_fundamentals.md file to the local repo
+_git commit_ will publish the git_intro/git_fundamentals.md file to the
+local repo
 
 ```sh
 $ git commit
@@ -432,7 +608,8 @@ $ git commit
  ```
 
 ## git push
-Using _git push_ commits changes made to your local repo to remote repository. _git push_ takes two arguments:
+Using _git push_ commits changes made to your local repo to remote repository.
+_git push_ takes two arguments:
 * remote name, ex. _origin_
 * branch name, ex. _master_
 
@@ -449,6 +626,7 @@ remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
 To github.com:binnur/developers_handbook.git
    30d5926..71bda4d  gitintro -> gitintro
 ```
+
 ### What is "non-fast-forward"?
 When your local repo is behind the repo you are pushing to you will see an error
 `non-fast-forward updates were rejected`. That means you need to retrieve the
